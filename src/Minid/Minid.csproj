@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFrameworks>net6.0;net5.0;netstandard2.1</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -8,5 +7,7 @@
     <PackageId>Minid</PackageId>
     <Description>Minid generates human-readable, URL-friendly, unique identifiers that are computed in-memory</Description>
   </PropertyGroup>
-
+  <ItemGroup>
+    <PackageReference Include="MinVer" Version="4.2.0"/>
+  </ItemGroup>
 </Project>
