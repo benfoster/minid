@@ -1,0 +1,6 @@
+<Project>
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+    <ItemGroup>
+        <PackageReference Include="SecurityCodeScan.VS2019" Version="5.0.0" PrivateAssets="all" />
+    </ItemGroup>
+</Project>

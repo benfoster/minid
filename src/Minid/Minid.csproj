@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net6.0;net5.0;netstandard2.1</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Minid</RootNamespace>
+    <AssemblyName>Minid</AssemblyName>
+    <PackageId>Minid</PackageId>
+    <Description>Minid generates human-readable, URL-friendly, unique identifiers that are computed in-memory</Description>
+  </PropertyGroup>
+
+</Project>

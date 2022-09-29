@@ -1,0 +1,19 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <!-- Enable nullable and treat their warnings as errors -->
+    <Nullable>enable</Nullable>
+    <WarningsAsErrors>nullable;</WarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Authors>@benfoster</Authors>
+    <Company>o9d</Company>
+    <PackageProjectUrl>https://github.com/benfoster/minid</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/benfoster/minid.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType> 
+  </PropertyGroup>
+  <PropertyGroup Label="MinVer">
+    <MinVerVerbosity>normal</MinVerVerbosity>
+  </PropertyGroup>
+</Project>
