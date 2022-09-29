@@ -84,7 +84,7 @@ Task("SonarBegin")
 Task("Build")
     .Does(() => 
     {
-        DotNetCoreBuild("minid.sln", new DotNetCoreBuildSettings 
+        DotNetBuild("minid.sln", new DotNetBuildSettings 
         {
             Configuration = configuration
         });
@@ -123,7 +123,7 @@ Task("Test")
 Task("Pack")
     .Does(() => 
     {
-        var settings = new DotNetCorePackSettings
+        var settings = new DotNetPackSettings
         {
             Configuration = configuration,
             OutputDirectory = artifactsPath,
@@ -132,7 +132,7 @@ Task("Pack")
 
         foreach (var file in GetFiles(packFiles))
         {
-            DotNetCorePack(file.ToString(), settings);
+            DotNetPack(file.ToString(), settings);
         }
     });
 
@@ -196,7 +196,7 @@ Task("PublishPackages")
     {
         foreach(var package in GetFiles(packages))
         {
-            DotNetCoreNuGetPush(package.ToString(), new DotNetCoreNuGetPushSettings {
+            DotNetNuGetPush(package.ToString(), new DotNetNuGetPushSettings {
                 ApiKey = BuildContext.NugetApiKey,
                 Source = BuildContext.NugetApiUrl,
                 SkipDuplicate = true
