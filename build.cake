@@ -99,7 +99,7 @@ Task("Test")
         {
             var projectName = project.GetFilenameWithoutExtension();
             
-            var testSettings = new DotNetTestSettings 
+            var testSettings = new DotNetCoreTestSettings 
             {
                 NoBuild = true,
                 Configuration = configuration,
