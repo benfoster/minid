@@ -10,7 +10,7 @@ public class IdConverterTests
     {
         _converter = new IdConverter();
     }
-    
+
     [Fact]
     public void Can_convert_to_string()
     {

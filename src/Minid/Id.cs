@@ -90,7 +90,7 @@ public struct Id : IEquatable<Id>
         return MemoryMarshal.Cast<T, ulong>(MemoryMarshal.CreateSpan(ref value, 1));
     }
 
-    public override bool Equals(object? other) => other is Id id && Equals(id);
+    public override bool Equals(object? obj) => obj is Id id && Equals(id);
 
     public bool Equals(Id other) => other._value.Equals(_value);
 
@@ -133,7 +133,7 @@ public struct Id : IEquatable<Id>
 
         public static bool TryDecode(ReadOnlySpan<byte> bytes, out Guid result)
         {
-            result = default;
+            result = Guid.Empty;
 
             Span<ulong> longs = AsSpan(ref result);
 

@@ -8,7 +8,7 @@ public class IdTests
     {
         var id = Id.NewId();
         string encoded = id.ToString();
-        
+
         Id.TryParse(encoded, out Id decoded).ShouldBeTrue();
         decoded.ShouldBe(id);
     }

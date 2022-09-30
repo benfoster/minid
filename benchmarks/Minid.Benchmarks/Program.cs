@@ -5,12 +5,11 @@ using Minid;
 
 BenchmarkRunner.Run(typeof(Program).Assembly);
 
-
 [MemoryDiagnoser]
 public class IdBenchmarks
 {
     private const string Encoded = "473cr1y0ghbyc3m1yfbwvn3nxx";
-    
+
     [Benchmark]
     public Id NewId() => Id.NewId();
 
