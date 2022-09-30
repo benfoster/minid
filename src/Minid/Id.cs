@@ -185,16 +185,4 @@ public struct Id : IEquatable<Id>
             return mapping;
         }
     }
-
-
-}
-
-public class MyClass
-{
-    public Id Id { get; }
-
-    public MyClass()
-    {
-        Id = Id.NewId();
-    }
 }
