@@ -16,14 +16,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11.0.x
-      - name: Setup .NET 5.0
+      - name: Setup .NET 6.0
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 5.0.x
-      - name: Setup .NET 3.1
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 3.1.x
+          dotnet-version: 6.0.x
       - name: Restore tools
         run: dotnet tool restore
       - name: Run the build script
@@ -34,6 +30,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           target: CI
+          #verbosity: Diagnostic
       - name: Upload pre-release packages
         uses: actions/upload-artifact@v2
         with:

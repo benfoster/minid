@@ -1,12 +1,13 @@
 // Install .NET Core Global tools.
-#tool "dotnet:?package=dotnet-reportgenerator-globaltool&version=5.0.0"
-#tool "dotnet:?package=coveralls.net&version=3.0.0"
-#tool "dotnet:?package=dotnet-sonarscanner&version=5.4.0"
+#tool "dotnet:?package=dotnet-reportgenerator-globaltool&version=5.1.10"
+#tool "dotnet:?package=coveralls.net&version=4.0.1"
+#tool "dotnet:?package=dotnet-sonarscanner&version=5.8.0"
 
 // Install addins 
 #addin nuget:?package=Cake.Coverlet&version=2.5.4
-#addin nuget:?package=Cake.Sonar&version=1.1.26
-#addin nuget:?package=Cake.Git&version=1.0.0
+#addin nuget:?package=Cake.Sonar&version=1.1.30
+// #addin nuget:?package=Cake.Git&version=2.0.0
+
 
  #r "System.Text.Json"
  #r "System.IO"
@@ -27,7 +28,7 @@ var docFxConfig = "./docs/docfx.json";
 
 var coverallsToken = EnvironmentVariable("COVERALLS_TOKEN");
 var sonarToken = EnvironmentVariable("SONAR_TOKEN");
-GitBranch currentBranch = GitBranchCurrent("./");
+//GitBranch currentBranch = GitBranchCurrent("./");
 
 uint coverageThreshold = 50;
 
@@ -37,8 +38,9 @@ uint coverageThreshold = 50;
 
 Setup(context =>
 {
-   BuildContext.Initialize(Context);
-   Information($"Building Minid with configuration {configuration} on branch {currentBranch.FriendlyName}");
+    BuildContext.Initialize(Context);
+    //Information($"Building Minid with configuration {configuration} on branch {currentBranch.FriendlyName}");
+    Information($"Building Minid with configuration {configuration}");
 });
 
 Teardown(ctx =>
@@ -84,7 +86,7 @@ Task("SonarBegin")
 Task("Build")
     .Does(() => 
     {
-        DotNetCoreBuild("minid.sln", new DotNetCoreBuildSettings 
+        DotNetBuild("minid.sln", new DotNetBuildSettings 
         {
             Configuration = configuration
         });
@@ -115,6 +117,8 @@ Task("Test")
                 Threshold = coverageThreshold
             };
             
+            // This method is exposed by Cake.Coverlet which has not yet been
+            // updated to target Cake.Core 2.0
             DotNetCoreTest(project.ToString(), testSettings, coverletSettings);
         }
    });
@@ -123,7 +127,7 @@ Task("Test")
 Task("Pack")
     .Does(() => 
     {
-        var settings = new DotNetCorePackSettings
+        var settings = new DotNetPackSettings
         {
             Configuration = configuration,
             OutputDirectory = artifactsPath,
@@ -132,7 +136,7 @@ Task("Pack")
 
         foreach (var file in GetFiles(packFiles))
         {
-            DotNetCorePack(file.ToString(), settings);
+            DotNetPack(file.ToString(), settings);
         }
     });
 
@@ -154,8 +158,8 @@ Task("UploadCoverage")
         Dictionary<string, object> @event = default;
         if (workflow.EventName == "pull_request")
         {
-            //string eventJson = System.IO.File.ReadAllText(workflow.EventPath); 
-            //@event = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(eventJson);
+            string eventJson = System.IO.File.ReadAllText(workflow.EventPath.ToString()); 
+            @event = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(eventJson);
         }
 
         var args = new ProcessArgumentBuilder()
@@ -196,7 +200,7 @@ Task("PublishPackages")
     {
         foreach(var package in GetFiles(packages))
         {
-            DotNetCoreNuGetPush(package.ToString(), new DotNetCoreNuGetPushSettings {
+            DotNetNuGetPush(package.ToString(), new DotNetNuGetPushSettings {
                 ApiKey = BuildContext.NugetApiKey,
                 Source = BuildContext.NugetApiUrl,
                 SkipDuplicate = true
@@ -279,3 +283,4 @@ public static class BuildContext
         context.Information("ShouldPublishToNuget: {0}", ShouldPublishToNuget);
     }
 }
+
