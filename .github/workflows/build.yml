@@ -34,6 +34,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           target: CI
+          verbosity: Diagnostic
       - name: Upload pre-release packages
         uses: actions/upload-artifact@v2
         with:

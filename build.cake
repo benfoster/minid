@@ -6,7 +6,8 @@
 // Install addins 
 #addin nuget:?package=Cake.Coverlet&version=2.5.4
 #addin nuget:?package=Cake.Sonar&version=1.1.26
-#addin nuget:?package=Cake.Git&version=1.0.0
+#addin nuget:?package=Cake.Git&version=2.0.0
+
 
  #r "System.Text.Json"
  #r "System.IO"
@@ -279,3 +280,4 @@ public static class BuildContext
         context.Information("ShouldPublishToNuget: {0}", ShouldPublishToNuget);
     }
 }
+
