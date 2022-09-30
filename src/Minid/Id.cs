@@ -39,7 +39,7 @@ public struct Id : IEquatable<Id>
     public static Id NewId(string? prefix = null) => new(Guid.NewGuid(), prefix);
     public static Id Empty => new(Guid.Empty);
 
-    public static bool TryParse(ReadOnlySpan<char> value, out Id result)
+    public static bool TryParse(ReadOnlySpan<char> value, out Id result, string? knownPrefix = null)
     {         
         bool hasPrefix = TryGetPrefix(value, out var prefixIndex, out var prefix);
         int requiredLength = hasPrefix ? Length + prefixIndex + 1 : Length;
@@ -58,7 +58,9 @@ public struct Id : IEquatable<Id>
 
         if (Decoder.TryDecode(source, out Guid decoded))
         {
-            result = new Id(decoded, prefix.ToString());
+            // If the prefix is known in advance we can take advantage of compile time constants
+            // and avoid allocating a new string
+            result = new Id(decoded, knownPrefix ?? prefix.ToString());
             return true;
         }
 

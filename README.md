@@ -18,6 +18,7 @@ Minid generates human-readable, URL-friendly, unique identifiers that are comput
 - Safe for URLs and file names
 - Case-insensitive
 - 30% smaller than Guid's default string format
+- Supports formatting with prefixes
 
 ### Example
 
@@ -39,7 +40,7 @@ dotnet add package minid
 
 You can then use the provided `Id` struct to generate identifiers in your applications. 
 
-```
+```c#
 public class Customer
 {
     public Id Id { get; }
@@ -53,19 +54,50 @@ public class Customer
 
 To get the Base32-encoded value call `ToString()` on the `Id` value:
 
-```
+```c#
 string encoded = customer.Id.ToString();
 ```
 
 You can also initialise the `Id` type from an existing Guid:
 
-```
+```c#
 var existingId = new Id(existingGuid);
+```
+
+To parse an encoded value:
+
+```c#
+if (Id.TryParse(encodedValue, out Id id))
+{
+
+}
 ```
 
 ### Prefixes
 
+A common pattern is to prefix API resource identifiers to indicate the resource type, for example `cus_473cr1y0ghbyc3m1yfbwvn3nxx` to represent a customer identifier. This is particularly useful when an API needs to accept identifiers for multiple resource types so that it can handle the request accordingly.
 
+To provide a prefix when generating a new `Id`:
+
+```c#
+var prefixedId = Id.NewId(prefix: "cus");
+```
+
+When specifying a prefix, the format of the encoded `Id` is `{prefix}_{encoded_guid_value}`.
+
+To parse an encoded value you can optionally specify the prefix you expect. This is slightly more performant since you can benefit from defining your prefixes as a constant, avoiding an allocation:
+
+```c#
+const string CustomerPrefix = "cus";
+if (Id.TryParse(encodedValue, out Id id, prefix: CustomerPrefix))
+{
+
+}
+```
+
+If you don't provide a prefix and one exists, it will be detected by the presence of the `_` separator, but no prefix validation will be performed. 
+
+The implicit detection is required when needing to convert the values using a `TypeConverter` such as serializing and deserializing JSON (see below).
 
 ### Serialization and Model-binding
 
@@ -82,18 +114,26 @@ If you don't want to depend on this type you can use `string` but this will allo
 
 ## Benchmarks
 
-// * Summary *
-
+```
 BenchmarkDotNet=v0.13.2, OS=macOS Monterey 12.5 (21G72) [Darwin 21.6.0]
 Apple M1 Max, 1 CPU, 10 logical and 10 physical cores
 .NET SDK=6.0.400
   [Host]     : .NET 6.0.8 (6.0.822.36306), Arm64 RyuJIT AdvSIMD
   DefaultJob : .NET 6.0.8 (6.0.822.36306), Arm64 RyuJIT AdvSIMD
+```
+|     Method |      Mean |    Error |   StdDev |   Gen0 | Allocated |
+|----------- |----------:|---------:|---------:|-------:|----------:|
+|      NewId | 114.02 ns | 0.390 ns | 0.365 ns |      - |         - |
+| IdToString | 153.27 ns | 0.875 ns | 0.819 ns | 0.0381 |      80 B |
+|    ParseId |  63.88 ns | 0.732 ns | 0.685 ns |      - |         - |
 
+With prefixes:
 
-|       Method |      Mean |    Error |   StdDev |   Gen0 | Allocated |
-|------------- |----------:|---------:|---------:|-------:|----------:|
-|        NewId | 112.24 ns | 0.430 ns | 0.381 ns |      - |         - |
-|   IdToString | 151.08 ns | 0.632 ns | 0.528 ns | 0.0381 |      80 B |
-| GuidToString | 217.03 ns | 0.606 ns | 0.537 ns | 0.0458 |      96 B |
-|      ParseId |  52.88 ns | 0.235 ns | 0.220 ns |      - |         - |
+|             Method |      Mean |    Error |   StdDev |   Gen0 | Allocated |
+|------------------- |----------:|---------:|---------:|-------:|----------:|
+|      NewPrefixedId | 112.98 ns | 0.609 ns | 0.569 ns |      - |         - |
+| PrefixedIdToString | 172.25 ns | 0.936 ns | 0.876 ns | 0.0420 |      88 B |
+|    ParsePrefixedId |  66.18 ns | 0.270 ns | 0.253 ns | 0.0153 |      32 B |
+| ParseIdKnownPrefix |  59.51 ns | 0.353 ns | 0.330 ns |      - |         - |
+
+Note that the `NewPrefixedId` benchmark makes uses of a constant for the prefix, hence the zero allocation.

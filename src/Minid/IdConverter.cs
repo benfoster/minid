@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Globalization;
-
 namespace Minid;
 
 public class IdConverter : TypeConverter
