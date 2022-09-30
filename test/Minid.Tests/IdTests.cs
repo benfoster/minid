@@ -44,4 +44,23 @@ public class IdTests
         Id.TryParse(encoded, out Id decoded).ShouldBeTrue();
         decoded.ShouldBe(id);
     }
+
+    [Fact]
+    public void Can_prefix_id()
+    {
+        var id = Id.NewId(prefix: "cust");
+        var encoded = id.ToString();
+        encoded.ShouldStartWith("cust_");
+        encoded.Length.ShouldBe(31); // prefix + separator + 26 encoded guid
+    }
+
+    [Fact]
+    public void Can_decode_prefixed_id()
+    {
+        var id = Id.NewId(prefix: "cust");
+        var encoded = id.ToString();
+
+        Id.TryParse(encoded, out Id decoded).ShouldBeTrue();
+        decoded.ShouldBe(id); // Need to ensure prefix is included in the equality comparison
+    }
 }

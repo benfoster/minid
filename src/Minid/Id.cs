@@ -16,6 +16,7 @@ public struct Id : IEquatable<Id>
 {
     // Allocation free byte array ref https://vcsjones.dev/csharp-readonly-span-bytes-static/
     private const int Length = 26;
+    private const char Separator = '_';
     private static ReadOnlySpan<byte> CharMap => new[]
     {
         (byte)'0', (byte)'1', (byte)'2', (byte)'3', (byte)'4', (byte)'5', (byte)'6', (byte)'7', (byte)'8', (byte)'9',
@@ -27,13 +28,15 @@ public struct Id : IEquatable<Id>
     private static readonly string EmptyString = new('0', Length);
 
     private readonly Guid _value;
+    private readonly string? _prefix;
 
-    public Id(Guid value)
+    public Id(Guid value, string? prefix = default)
     {
         _value = value;
+        _prefix = prefix;
     }
 
-    public static Id NewId() => new(Guid.NewGuid());
+    public static Id NewId(string? prefix = null) => new(Guid.NewGuid(), prefix);
     public static Id Empty => new(Guid.Empty);
 
     public static bool TryParse(ReadOnlySpan<char> value, out Id result)
@@ -62,18 +65,48 @@ public struct Id : IEquatable<Id>
     /// Converts the ID to a base-32 encoded value
     /// </summary>
     /// <returns></returns>
-    public override string ToString() => Encode(_value);
+    public override string ToString() => Encode(_value, _prefix);
 
     /// <summary>
     /// Encodes the provided Guid value
     /// </summary>
     /// <param name="value">The Guid value to derive the ID from</param>
     /// <returns></returns>
-    private static string Encode(Guid value)
+    private static string Encode(Guid value, string? prefix)
     {
         if (value == Guid.Empty)
         {
             return EmptyString;
+        }
+
+        if (prefix is not null)
+        {
+            int prefixedLength = Length + prefix.Length + /*separator*/ 1;
+
+            var state = new
+            {
+                Value = value,
+                Prefix = prefix
+            };
+
+            // Do not use the value parameter as it would introduce a closure
+            // that cannot be cached
+            // Ref https://www.meziantou.net/some-performance-tricks-with-dotnet-strings.htm#using-string-create
+            return string.Create(
+                prefixedLength, state, (buffer, state) =>
+                {
+                    int index = 0;
+                    
+                    for (index = 0; index < prefix.Length; index++)
+                    {
+                        buffer[index] = prefix[index]; // try AsSpan()
+                    }
+
+                    buffer[index] = Separator;
+                    
+                    Encoder.Encode(state.Value, buffer.Slice(index + 1));
+                }
+            );
         }
 
         // Do not use the value parameter as it would introduce a closure
