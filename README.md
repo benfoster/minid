@@ -89,7 +89,7 @@ To parse an encoded value you can optionally specify the prefix you expect. This
 
 ```c#
 const string CustomerPrefix = "cus";
-if (Id.TryParse(encodedValue, out Id id, prefix: CustomerPrefix))
+if (Id.TryParse(encodedValue, CustomerPrefix, out Id id))
 {
 
 }
@@ -135,5 +135,14 @@ With prefixes:
 | PrefixedIdToString | 172.25 ns | 0.936 ns | 0.876 ns | 0.0420 |      88 B |
 |    ParsePrefixedId |  66.18 ns | 0.270 ns | 0.253 ns | 0.0153 |      32 B |
 | ParseIdKnownPrefix |  59.51 ns | 0.353 ns | 0.330 ns |      - |         - |
+
+
+|             Method |      Mean |    Error |   StdDev |   Gen0 | Allocated |
+|------------------- |----------:|---------:|---------:|-------:|----------:|
+|      NewPrefixedId | 112.98 ns | 0.609 ns | 0.569 ns |      - |         - |
+| PrefixedIdToString | 172.25 ns | 0.936 ns | 0.876 ns | 0.0420 |      88 B |
+|    ParsePrefixedId |  67.76 ns | 0.319 ns | 0.298 ns | 0.0153 |      32 B |
+| ParseIdKnownPrefix |  56.98 ns | 0.140 ns | 0.131 ns |      - |         - |
+
 
 Note that the `NewPrefixedId` benchmark makes uses of a constant for the prefix, hence the zero allocation.

@@ -39,10 +39,41 @@ public struct Id : IEquatable<Id>
     public static Id NewId(string? prefix = null) => new(Guid.NewGuid(), prefix);
     public static Id Empty => new(Guid.Empty);
 
-    public static bool TryParse(ReadOnlySpan<char> value, out Id result, string? knownPrefix = null)
+    
+    public static bool TryParse(ReadOnlySpan<char> value, string prefix, out Id result)
+    {
+        int requiredLength = prefix.Length + 1 + Length;
+
+        if (value.Length != requiredLength || !value.StartsWith(prefix))
+        {
+            result = default;
+            return false;
+        }
+
+        Span<byte> source = stackalloc byte[Length];
+
+        // If there's a prefix we need to exclude this from Guid decoding 
+        Encoding.ASCII.GetBytes(value.Slice(prefix.Length + 1), source);
+
+        if (Decoder.TryDecode(source, out Guid decoded))
+        {
+            // If the prefix is known in advance we can take advantage of compile time constants
+            // and avoid allocating a new string
+            result = new Id(decoded, prefix);
+            return true;
+        }
+
+        result = default;
+        return false;
+    }
+
+    public static bool TryParse(ReadOnlySpan<char> value, out Id result)
     {         
         bool hasPrefix = TryGetPrefix(value, out var prefixIndex, out var prefix);
-        int requiredLength = hasPrefix ? Length + prefixIndex + 1 : Length;
+
+        int requiredLength = hasPrefix
+            ? Length + prefixIndex + 1
+            : Length;
 
         if (value.Length != requiredLength)
         {
@@ -60,7 +91,7 @@ public struct Id : IEquatable<Id>
         {
             // If the prefix is known in advance we can take advantage of compile time constants
             // and avoid allocating a new string
-            result = new Id(decoded, knownPrefix ?? prefix.ToString());
+            result = new Id(decoded, prefix.ToString());
             return true;
         }
 

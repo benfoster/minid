@@ -49,7 +49,7 @@ public class PrefixedIdBenchmarks
     [Benchmark]
     public Id ParseIdKnownPrefix()
     {
-        _ = Id.TryParse(EncodedWithPrefix, out Id decoded, knownPrefix: Prefix);
+        _ = Id.TryParse(EncodedWithPrefix, Prefix, out Id decoded);
         return decoded;
     }
 }
