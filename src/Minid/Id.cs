@@ -39,10 +39,10 @@ public struct Id : IEquatable<Id>
     public static Id NewId(string? prefix = null) => new(Guid.NewGuid(), prefix);
     public static Id Empty => new(Guid.Empty);
 
-    public static bool TryParse(ReadOnlySpan<char> value, out Id result, string? prefix = null)
-    {
-        int requiredLength = prefix is null ? Length : prefix.Length + 1 + Length;
-        int guidStartIndex = 0;
+    public static bool TryParse(ReadOnlySpan<char> value, out Id result)
+    {         
+        bool hasPrefix = TryGetPrefix(value, out var prefixIndex, out var prefix);
+        int requiredLength = hasPrefix ? Length + prefixIndex + 1 : Length;
 
         if (value.Length != requiredLength)
         {
@@ -50,32 +50,33 @@ public struct Id : IEquatable<Id>
             return false;
         }
 
-        // Prefix validation could be optional
-        if (prefix is not null)
-        {
-            guidStartIndex = prefix.Length + 1;
-
-            if (!value.StartsWith(prefix + Separator))
-            {
-                result = default;
-                return false;
-            }
-        }
-
         Span<byte> source = stackalloc byte[Length];
 
         // If there's a prefix we need to exclude this from Guid decoding 
         Encoding.ASCII.GetBytes(
-            guidStartIndex > 0 ? value.Slice(guidStartIndex) : value, source);
+            hasPrefix ? value.Slice(prefixIndex + 1) : value, source);
 
         if (Decoder.TryDecode(source, out Guid decoded))
         {
-            result = new Id(decoded, prefix);
+            result = new Id(decoded, prefix.ToString());
             return true;
         }
 
         result = default;
         return false;
+    }
+
+    private static bool TryGetPrefix(ReadOnlySpan<char> value, out int index, out ReadOnlySpan<char> prefix)
+    {
+        index = value.IndexOf(Separator);
+        prefix = default;
+
+        if (index > 0)
+        {
+            prefix = value.Slice(0, index);
+        }
+
+        return index > 0; // Must have at least a character before the separator
     }
 
     /// <summary>

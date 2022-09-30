@@ -9,7 +9,6 @@ BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
 public class IdBenchmarks
 {
     private const string Encoded = "473cr1y0ghbyc3m1yfbwvn3nxx";
-    private const string EncodedWithPrefix = "cust_473cr1y0ghbyc3m1yfbwvn3nxx";
 
     [Benchmark]
     public Id NewId() => Id.NewId();
@@ -32,7 +31,7 @@ public class IdBenchmarks
 public class PrefixedIdBenchmarks
 {
     private const string Prefix = "cust";
-    private const string EncodedWithPrefix = Prefix + "_473cr1y0ghbyc3m1yfbwvn3nxx";
+    private const string EncodedWithPrefix = "cust_473cr1y0ghbyc3m1yfbwvn3nxx";
 
     [Benchmark]
     public Id NewPrefixedId() => Id.NewId(prefix: Prefix);
@@ -40,10 +39,10 @@ public class PrefixedIdBenchmarks
     [Benchmark]
     public string PrefixedIdToString() => Id.NewId(prefix: Prefix).ToString();
 
-    // [Benchmark]
-    // public Id ParsePrefixedId()
-    // {
-    //     _ = Id.TryParse(EncodedWithPrefix, out Id decoded);
-    //     return decoded;
-    // }
+    [Benchmark]
+    public Id ParsePrefixedId()
+    {
+        _ = Id.TryParse(EncodedWithPrefix, out Id decoded);
+        return decoded;
+    }
 }

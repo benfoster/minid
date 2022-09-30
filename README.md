@@ -63,6 +63,10 @@ You can also initialise the `Id` type from an existing Guid:
 var existingId = new Id(existingGuid);
 ```
 
+### Prefixes
+
+
+
 ### Serialization and Model-binding
 
 A type converter is included so that you can bind directly to the `Id` type in your applications and both System.Text.Json and Newtonsoft will also take care of serializing and deserializing it correctly.

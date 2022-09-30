@@ -33,3 +33,4 @@ tools/**
 !tools/packages.config
 
 artifacts/
+BenchmarkDotNet.Artifacts/
