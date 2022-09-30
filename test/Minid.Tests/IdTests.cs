@@ -60,7 +60,17 @@ public class IdTests
         var id = Id.NewId(prefix: "cust");
         var encoded = id.ToString();
 
-        Id.TryParse(encoded, out Id decoded).ShouldBeTrue();
+        Id.TryParse(encoded, out Id decoded, prefix: "cust").ShouldBeTrue();
         decoded.ShouldBe(id); // Need to ensure prefix is included in the equality comparison
+        decoded.ToString().ShouldStartWith("cust_");
+    }
+
+    [Fact]
+    public void Decode_fails_with_prefix_mismatch()
+    {
+        var id = Id.NewId(prefix: "cust");
+        var encoded = id.ToString();
+
+        Id.TryParse(encoded, out Id _, prefix: "ord").ShouldBeFalse();
     }
 }

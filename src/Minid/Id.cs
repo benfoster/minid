@@ -39,21 +39,38 @@ public struct Id : IEquatable<Id>
     public static Id NewId(string? prefix = null) => new(Guid.NewGuid(), prefix);
     public static Id Empty => new(Guid.Empty);
 
-    public static bool TryParse(ReadOnlySpan<char> value, out Id result)
+    public static bool TryParse(ReadOnlySpan<char> value, out Id result, string? prefix = null)
     {
-        if (value.Length != Length)
+        int requiredLength = prefix is null ? Length : prefix.Length + 1 + Length;
+        int guidStartIndex = 0;
+
+        if (value.Length != requiredLength)
         {
             result = default;
             return false;
         }
 
+        // Prefix validation could be optional
+        if (prefix is not null)
+        {
+            guidStartIndex = prefix.Length + 1;
+
+            if (!value.StartsWith(prefix + Separator))
+            {
+                result = default;
+                return false;
+            }
+        }
+
         Span<byte> source = stackalloc byte[Length];
 
-        Encoding.ASCII.GetBytes(value, source);
+        // If there's a prefix we need to exclude this from Guid decoding 
+        Encoding.ASCII.GetBytes(
+            guidStartIndex > 0 ? value.Slice(guidStartIndex) : value, source);
 
         if (Decoder.TryDecode(source, out Guid decoded))
         {
-            result = new Id(decoded);
+            result = new Id(decoded, prefix);
             return true;
         }
 
@@ -79,41 +96,40 @@ public struct Id : IEquatable<Id>
             return EmptyString;
         }
 
-        if (prefix is not null)
+        // Do not use the value parameter as it would introduce a closure
+        // that cannot be cached
+        // Ref https://www.meziantou.net/some-performance-tricks-with-dotnet-strings.htm#using-string-create
+        if (prefix is null)
         {
-            int prefixedLength = Length + prefix.Length + /*separator*/ 1;
-
-            var state = new
-            {
-                Value = value,
-                Prefix = prefix
-            };
-
-            // Do not use the value parameter as it would introduce a closure
-            // that cannot be cached
-            // Ref https://www.meziantou.net/some-performance-tricks-with-dotnet-strings.htm#using-string-create
             return string.Create(
-                prefixedLength, state, (buffer, state) =>
-                {
-                    int index = 0;
-                    
-                    for (index = 0; index < prefix.Length; index++)
-                    {
-                        buffer[index] = prefix[index]; // try AsSpan()
-                    }
-
-                    buffer[index] = Separator;
-                    
-                    Encoder.Encode(state.Value, buffer.Slice(index + 1));
-                }
+                Length, value, (buffer, state) => Encoder.Encode(state, buffer)
             );
         }
+
+        // Include prefix in encoded ID
+        int prefixedLength = Length + prefix.Length + /*separator*/ 1;
+
+        var context = new EncodingContext
+        {
+            Value = value,
+            Prefix = prefix
+        };
 
         // Do not use the value parameter as it would introduce a closure
         // that cannot be cached
         // Ref https://www.meziantou.net/some-performance-tricks-with-dotnet-strings.htm#using-string-create
         return string.Create(
-            Length, value, (buffer, state) => Encoder.Encode(state, buffer)
+            prefixedLength, context, (buffer, state) =>
+            {
+                var prefixSpan = state.Prefix.AsSpan();
+                prefixSpan.CopyTo(buffer);
+
+                // Add the separator
+                buffer[prefixSpan.Length] = Separator;
+
+                // Encode the guid value
+                Encoder.Encode(state.Value, buffer.Slice(prefixSpan.Length + 1));
+            }
         );
     }
 
@@ -132,6 +148,12 @@ public struct Id : IEquatable<Id>
     public static bool operator ==(Id left, Id right) => left.Equals(right);
     public static bool operator !=(Id left, Id right) => !left.Equals(right);
 
+    private struct EncodingContext
+    {
+        public Guid Value { get; set; }
+        public string? Prefix { get; set; }
+    }
+    
     private static class Encoder
     {
         public static void Encode(Guid value, Span<char> target)
