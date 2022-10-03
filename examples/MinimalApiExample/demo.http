@@ -1,0 +1,21 @@
+@host = localhost:7119
+
+# @name post_customers
+POST https://{{host}}/customers HTTP/1.1
+
+###
+
+@id = {{post_customers.response.body.$.id}}
+
+###
+
+GET https://{{host}}/customers/{{id}} HTTP/1.1
+
+###
+
+POST https://{{host}}/customers/{{id}}/disable HTTP/1.1
+content-type: application/json
+
+{
+    "operatorId": "{{id}}"
+}

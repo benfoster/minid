@@ -76,7 +76,7 @@ Task("SonarBegin")
             Key = "benfoster_minid",
             Organization = "benfoster",
             Url = "https://sonarcloud.io",
-            Exclusions = "test/**",
+            Exclusions = "test/**,examples/**",
             OpenCoverReportsPath = $"{coveragePath}/*.xml",
             Login = sonarToken,
             VsTestReportsPath = $"{artifactsPath}/*.TestResults.xml",
