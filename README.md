@@ -126,26 +126,17 @@ Apple M1 Max, 1 CPU, 10 logical and 10 physical cores
 ```
 |     Method |      Mean |    Error |   StdDev |   Gen0 | Allocated |
 |----------- |----------:|---------:|---------:|-------:|----------:|
-|      NewId | 114.02 ns | 0.390 ns | 0.365 ns |      - |         - |
-| IdToString | 153.27 ns | 0.875 ns | 0.819 ns | 0.0381 |      80 B |
-|    ParseId |  63.88 ns | 0.732 ns | 0.685 ns |      - |         - |
+|      NewId | 113.48 ns | 0.659 ns | 0.584 ns |      - |         - |
+| IdToString | 153.47 ns | 0.838 ns | 0.784 ns | 0.0381 |      80 B |
+|    ParseId |  63.32 ns | 0.547 ns | 0.511 ns |      - |         - |
 
 With prefixes:
 
 |             Method |      Mean |    Error |   StdDev |   Gen0 | Allocated |
 |------------------- |----------:|---------:|---------:|-------:|----------:|
-|      NewPrefixedId | 112.98 ns | 0.609 ns | 0.569 ns |      - |         - |
-| PrefixedIdToString | 172.25 ns | 0.936 ns | 0.876 ns | 0.0420 |      88 B |
-|    ParsePrefixedId |  66.18 ns | 0.270 ns | 0.253 ns | 0.0153 |      32 B |
-| ParseIdKnownPrefix |  59.51 ns | 0.353 ns | 0.330 ns |      - |         - |
-
-
-|             Method |      Mean |    Error |   StdDev |   Gen0 | Allocated |
-|------------------- |----------:|---------:|---------:|-------:|----------:|
-|      NewPrefixedId | 112.98 ns | 0.609 ns | 0.569 ns |      - |         - |
-| PrefixedIdToString | 172.25 ns | 0.936 ns | 0.876 ns | 0.0420 |      88 B |
-|    ParsePrefixedId |  67.76 ns | 0.319 ns | 0.298 ns | 0.0153 |      32 B |
-| ParseIdKnownPrefix |  56.98 ns | 0.140 ns | 0.131 ns |      - |         - |
-
+|      NewPrefixedId | 111.78 ns | 0.437 ns | 0.387 ns |      - |         - |
+| PrefixedIdToString | 172.68 ns | 1.133 ns | 1.060 ns | 0.0420 |      88 B |
+|    ParsePrefixedId |  65.65 ns | 0.597 ns | 0.558 ns | 0.0153 |      32 B |
+| ParseIdKnownPrefix |  55.82 ns | 0.266 ns | 0.249 ns |      - |         - |
 
 Note that the `NewPrefixedId` benchmark makes uses of a constant for the prefix, hence the zero allocation.
