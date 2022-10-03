@@ -1,3 +1,4 @@
+using MinimalApiExampleDemo;
 using System.Globalization;
 using Minid;
 
@@ -28,7 +29,10 @@ app.MapPost("/customers/{id}/disable", (DisableRequest disableRequest) =>
 app.Run();
 
 
-public class DisableRequest
+namespace MinimalApiExampleDemo
 {
-    public Id OperatorId { get; set; }
+    public class DisableRequest
+    {
+        public Id OperatorId { get; set; }
+    }
 }
