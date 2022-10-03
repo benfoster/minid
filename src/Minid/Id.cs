@@ -41,7 +41,7 @@ public struct Id : IEquatable<Id>
     public static Id NewId(string? prefix = null) => new(Guid.NewGuid(), prefix);
     public static Id Empty => new(Guid.Empty);
 
-    
+
     public static bool TryParse(ReadOnlySpan<char> value, string prefix, out Id result)
     {
         int requiredLength = prefix.Length + 1 + Length;
@@ -70,7 +70,7 @@ public struct Id : IEquatable<Id>
     }
 
     public static bool TryParse(ReadOnlySpan<char> value, out Id result)
-    {         
+    {
         bool hasPrefix = TryGetPrefix(value, out var prefixIndex, out var prefix);
 
         int requiredLength = hasPrefix
@@ -99,6 +99,13 @@ public struct Id : IEquatable<Id>
 
         result = default;
         return false;
+    }
+
+    // Used by Minimal APIs for custom parameter binding
+    // https://benfoster.io/blog/minimal-apis-custom-model-binding-aspnet-6/
+    public static bool TryParse(string? value, IFormatProvider? _, out Id result)
+    {
+        return TryParse(value, out result);
     }
 
     private static bool TryGetPrefix(ReadOnlySpan<char> value, out int index, out ReadOnlySpan<char> prefix)
@@ -189,7 +196,7 @@ public struct Id : IEquatable<Id>
         public Guid Value { get; set; }
         public string? Prefix { get; set; }
     }
-    
+
     private static class Encoder
     {
         public static void Encode(Guid value, Span<char> target)
