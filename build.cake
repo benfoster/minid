@@ -76,9 +76,10 @@ Task("SonarBegin")
             Key = "benfoster_minid",
             Organization = "benfoster",
             Url = "https://sonarcloud.io",
-            Exclusions = "test/**,examples/**",
+            Exclusions = "test/**,examples/**,benchmarks/**",
             OpenCoverReportsPath = $"{coveragePath}/*.xml",
             Login = sonarToken,
+            Sources
             VsTestReportsPath = $"{artifactsPath}/*.TestResults.xml",
         });
     });
