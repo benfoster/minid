@@ -2,13 +2,13 @@ using Shouldly;
 
 namespace Minid.Tests;
 
-public class IdConverterTests
+public class IdTypeConverterTests
 {
-    private readonly IdConverter _converter;
+    private readonly IdTypeConverter _converter;
 
-    public IdConverterTests()
+    public IdTypeConverterTests()
     {
-        _converter = new IdConverter();
+        _converter = new IdTypeConverter();
     }
 
     [Fact]
@@ -17,7 +17,7 @@ public class IdConverterTests
         _converter.CanConvertTo(typeof(string)).ShouldBeTrue();
 
         var id = Id.NewId();
-                
+
         _converter.ConvertTo(null, Thread.CurrentThread.CurrentCulture, id, typeof(string))
             .ShouldBe(id.ToString());
     }
@@ -26,9 +26,9 @@ public class IdConverterTests
     public void Can_convert_from_string()
     {
         _converter.CanConvertFrom(typeof(string)).ShouldBeTrue();
-                
+
         var id = Id.NewId();
-        
+
         var decoded = _converter.ConvertFrom(null, Thread.CurrentThread.CurrentCulture, id.ToString());
         decoded.ShouldBe(id);
     }

@@ -1,13 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks>net6.0;net5.0;netstandard2.1</TargetFrameworks>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>Minid</RootNamespace>
-    <AssemblyName>Minid</AssemblyName>
-    <PackageId>Minid</PackageId>
-    <Description>Minid generates human-readable, URL-friendly, unique identifiers that are computed in-memory</Description>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="MinVer" Version="4.2.0"/>
-  </ItemGroup>
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;net5.0;netstandard2.1</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>Minid</RootNamespace>
+        <AssemblyName>Minid</AssemblyName>
+        <PackageId>Minid</PackageId>
+        <Description>Minid generates human-readable, URL-friendly, unique identifiers that are computed in-memory</Description>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="MinVer" Version="4.2.0"/>
+    </ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
+        <PackageReference Include="System.Text.Json" Version="[5.0.2,6.0)" />
+    </ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
+        <PackageReference Include="System.Text.Json" Version="[5.0.2,6.0)" />
+    </ItemGroup>
 </Project>

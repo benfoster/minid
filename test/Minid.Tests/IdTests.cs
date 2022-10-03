@@ -44,4 +44,54 @@ public class IdTests
         Id.TryParse(encoded, out Id decoded).ShouldBeTrue();
         decoded.ShouldBe(id);
     }
+
+    [Fact]
+    public void Can_prefix_id()
+    {
+        var id = Id.NewId(prefix: "cust");
+        var encoded = id.ToString();
+        encoded.ShouldStartWith("cust_");
+        encoded.Length.ShouldBe(31); // prefix + separator + 26 encoded guid
+    }
+
+    [Fact]
+    public void Can_decode_prefixed_id()
+    {
+        var id = Id.NewId(prefix: "cust");
+        var encoded = id.ToString();
+
+        Id.TryParse(encoded, out Id decoded).ShouldBeTrue();
+        decoded.ShouldBe(id);
+        decoded.ToString().ShouldStartWith("cust_");
+    }
+
+    [Fact]
+    public void Can_decode_known_prefixed_id()
+    {
+        var id = Id.NewId(prefix: "cust");
+        var encoded = id.ToString();
+
+        Id.TryParse(encoded, "cust", out Id decoded).ShouldBeTrue();
+        decoded.ShouldBe(id);
+        decoded.ToString().ShouldStartWith("cust_");
+    }
+
+    [Theory]
+    [InlineData("473cr1y0ghbyc3m1yfbwvn3nxx", true)]
+    [InlineData("473cr1y", false)]
+    [InlineData("ord_473cr1y0ghbyc3m1yfbwvn3nxx", true)]
+    [InlineData("ord_cr1y0ghbyc3m1yfbwvn3nxx", false)]
+    [InlineData("473cr1y0ghbyc3m1yfbwvn3nxx0ghbyc3m1yfbwvn3nxx", false)]
+    public void Validates_length_when_decoding(string encoded, bool isValid)
+    {
+        Id.TryParse(encoded, out Id _).ShouldBe(isValid);
+    }
+
+    [Theory]
+    [InlineData("cust_473cr1y0ghbyc3m1yfbwvn3nxx", "cust", true)]
+    [InlineData("foo_473cr1y0ghbyc3m1yfbwvn3nxx", "cust", false)]
+    public void Validates_known_prefix(string encoded, string knownPrefix, bool isValid)
+    {
+        Id.TryParse(encoded, knownPrefix, out Id _).ShouldBe(isValid);
+    }
 }
