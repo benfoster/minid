@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Minid;
 
@@ -10,7 +11,8 @@ namespace Minid;
 /// <remarks>
 /// Based on @khellang's CompactId implementation https://gist.github.com/khellang/4993fcfbf8fb2ecdeccc2c822567037c
 /// </remarks>
-[TypeConverter(typeof(IdConverter))]
+[TypeConverter(typeof(IdTypeConverter))]
+[JsonConverter(typeof(IdJsonConverter))]
 [Serializable]
 public struct Id : IEquatable<Id>
 {

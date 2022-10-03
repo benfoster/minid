@@ -2,13 +2,13 @@ using Shouldly;
 
 namespace Minid.Tests;
 
-public class IdConverterTests
+public class IdTypeConverterTests
 {
-    private readonly IdConverter _converter;
+    private readonly IdTypeConverter _converter;
 
-    public IdConverterTests()
+    public IdTypeConverterTests()
     {
-        _converter = new IdConverter();
+        _converter = new IdTypeConverter();
     }
 
     [Fact]

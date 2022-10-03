@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Globalization;
 namespace Minid;
 
-public class IdConverter : TypeConverter
+public class IdTypeConverter : TypeConverter
 {
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
     {

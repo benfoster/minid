@@ -99,10 +99,13 @@ If you don't provide a prefix and one exists, it will be detected by the presenc
 
 The implicit detection is required when needing to convert the values using a `TypeConverter` such as serializing and deserializing JSON (see below).
 
+**Note that currently the prefix is not considered when comparing two `Id` values.**
+
 ### Serialization and Model-binding
 
-A type converter is included so that you can bind directly to the `Id` type in your applications and both System.Text.Json and Newtonsoft will also take care of serializing and deserializing it correctly.
+A `TypeConverter` and System.Text.Json `JsonConverter` are included so that you can bind, serialize and deserialize `Id` values without explicit conversion.
 
+Note that support for Type Converters was only added to [Newtonsoft Json.NET](https://www.newtonsoft.com/json) from version 10.
 
 ### Why a dedicated type?
 
