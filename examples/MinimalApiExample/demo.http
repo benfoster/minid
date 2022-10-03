@@ -1,5 +1,6 @@
 @host = localhost:7119
 
+# Serialization
 # @name post_customers
 POST https://{{host}}/customers HTTP/1.1
 
@@ -9,10 +10,12 @@ POST https://{{host}}/customers HTTP/1.1
 
 ###
 
+# Parameter Binding
 GET https://{{host}}/customers/{{id}} HTTP/1.1
 
 ###
 
+# Model binding
 POST https://{{host}}/customers/{{id}}/disable HTTP/1.1
 content-type: application/json
 
