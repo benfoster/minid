@@ -7,13 +7,12 @@
         <PackageId>Minid</PackageId>
         <Description>Minid generates human-readable, URL-friendly, unique identifiers that are computed in-memory</Description>
     </PropertyGroup>
+    
     <ItemGroup>
-        <PackageReference Include="MinVer" Version="4.2.0"/>
+        <PackageReference Include="MinVer" Version="4.2.0" PrivateAssets="All"/>
     </ItemGroup>
+    
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
-        <PackageReference Include="System.Text.Json" Version="[5.0.2,6.0)" />
-    </ItemGroup>
-    <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
         <PackageReference Include="System.Text.Json" Version="[5.0.2,6.0)" />
     </ItemGroup>
 </Project>
