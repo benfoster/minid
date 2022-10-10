@@ -79,7 +79,6 @@ Task("SonarBegin")
             Exclusions = "test/**,examples/**,benchmarks/**",
             OpenCoverReportsPath = $"{coveragePath}/*.xml",
             Login = sonarToken,
-            Sources
             VsTestReportsPath = $"{artifactsPath}/*.TestResults.xml",
         });
     });
