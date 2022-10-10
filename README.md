@@ -7,7 +7,7 @@
 ![Build](https://github.com/benfoster/minid/workflows/Build/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/benfoster/minid/badge.svg?branch=main)](https://coveralls.io/github/benfoster/minid?branch=main)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=benfoster_minid&metric=alert_status)](https://sonarcloud.io/dashboard?id=benfoster_minid)
-[![GuardRails badge](https://api.guardrails.io/v2/badges/benfoster/minid.svg?token=59af717aeba71bc862995cd302659f0e511ebe43ff28ee6df11fe8669b15dc1d&provider=github)](https://dashboard.guardrails.io/gh/benfoster/repos/146839)
+[![GuardRails badge](https://api.guardrails.io/v2/badges/146839?token=59af717aeba71bc862995cd302659f0e511ebe43ff28ee6df11fe8669b15dc1d)](https://dashboard.guardrails.io/gh/benfoster/repos/146839)
 
 Minid generates human-readable, URL-friendly, unique identifiers that are computed in-memory.
 
