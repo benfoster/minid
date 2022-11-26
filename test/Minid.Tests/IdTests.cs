@@ -65,6 +65,7 @@ public class IdTests
 
         Id.TryParse(encoded, out Id decoded).ShouldBeTrue();
         decoded.ShouldBe(id);
+        decoded.Prefix.ShouldBe(prefix);
         decoded.ToString().ShouldStartWith(prefix + "_");
     }
 
@@ -78,6 +79,7 @@ public class IdTests
 
         Id.TryParse(encoded, prefix, out Id decoded).ShouldBeTrue();
         decoded.ShouldBe(id);
+        decoded.Prefix.ShouldBe(prefix);
         decoded.ToString().ShouldStartWith(prefix + "_");
     }
 
