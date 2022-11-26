@@ -50,3 +50,21 @@ public class PrefixedIdBenchmarks
         return decoded;
     }
 }
+
+[MemoryDiagnoser]
+public class IndexOfBenchmarks
+{
+    [Benchmark]
+    public int IndexOf()
+    {
+        ReadOnlySpan<char> id = "cust_473cr1y0ghbyc3m1yfbwvn3nxx";
+        return id.IndexOf("_");
+    }
+
+    [Benchmark]
+    public int LastIndexOf()
+    {
+        ReadOnlySpan<char> id = "cust_473cr1y0ghbyc3m1yfbwvn3nxx";
+        return id[..26].LastIndexOf('_');
+    }
+}

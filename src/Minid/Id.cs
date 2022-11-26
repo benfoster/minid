@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -130,12 +131,23 @@ public struct Id : IEquatable<Id>
 
     private static bool TryGetPrefix(ReadOnlySpan<char> value, out int index, out ReadOnlySpan<char> prefix)
     {
-        index = value.LastIndexOf(Separator);
         prefix = default;
+
+        // If the length is less or equal to the encoded length
+        // then it can't have a prefix and/or be valid
+        if (value.Length <= Length)
+        {
+            index = -1;
+            return false;
+        }
+
+        // Prefix can only be in the start of the string minus encoded length
+        prefix = value[..^26];
+        index = prefix.LastIndexOf(Separator);
 
         if (index > 0)
         {
-            prefix = value.Slice(0, index);
+            prefix = prefix[..index];
         }
 
         return index > 0; // Must have at least a character before the separator
