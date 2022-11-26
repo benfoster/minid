@@ -55,26 +55,30 @@ public class IdTests
         encoded.Length.ShouldBe(31); // prefix + separator + 26 encoded guid
     }
 
-    [Fact]
-    public void Can_decode_prefixed_id()
+    [Theory]
+    [InlineData("cust")]
+    [InlineData("a_cust")]
+    public void Can_decode_prefixed_id(string prefix)
     {
-        var id = Id.NewId(prefix: "cust");
+        var id = Id.NewId(prefix: prefix);
         var encoded = id.ToString();
 
         Id.TryParse(encoded, out Id decoded).ShouldBeTrue();
         decoded.ShouldBe(id);
-        decoded.ToString().ShouldStartWith("cust_");
+        decoded.ToString().ShouldStartWith(prefix + "_");
     }
 
-    [Fact]
-    public void Can_decode_known_prefixed_id()
+    [Theory]
+    [InlineData("cust")]
+    [InlineData("a_cust")]
+    public void Can_decode_known_prefixed_id(string prefix)
     {
-        var id = Id.NewId(prefix: "cust");
+        var id = Id.NewId(prefix: prefix);
         var encoded = id.ToString();
 
-        Id.TryParse(encoded, "cust", out Id decoded).ShouldBeTrue();
+        Id.TryParse(encoded, prefix, out Id decoded).ShouldBeTrue();
         decoded.ShouldBe(id);
-        decoded.ToString().ShouldStartWith("cust_");
+        decoded.ToString().ShouldStartWith(prefix + "_");
     }
 
     [Theory]

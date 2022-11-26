@@ -130,7 +130,7 @@ public struct Id : IEquatable<Id>
 
     private static bool TryGetPrefix(ReadOnlySpan<char> value, out int index, out ReadOnlySpan<char> prefix)
     {
-        index = value.IndexOf(Separator);
+        index = value.LastIndexOf(Separator);
         prefix = default;
 
         if (index > 0)
