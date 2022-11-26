@@ -94,4 +94,30 @@ public class IdTests
     {
         Id.TryParse(encoded, knownPrefix, out Id _).ShouldBe(isValid);
     }
+
+    [Theory]
+    [InlineData("473cr1y0ghbyc3m1yfbwvn3nxx")]
+    [InlineData("acc_473cr1y0ghbyc3m1yfbwvn3nxx")]
+    public void Can_parse(string encoded)
+    {
+        Id.Parse(encoded);
+    }
+
+    [Fact]
+    public void Can_parse_throws_if_invalid()
+    {
+        Should.Throw<ArgumentException>(() => Id.Parse("invalid"));
+    }
+
+    [Fact]
+    public void Can_parse_with_prefix()
+    {
+        Id.Parse("acc_473cr1y0ghbyc3m1yfbwvn3nxx", "acc");
+    }
+
+    [Fact]
+    public void Can_parse_with_prefix_throws_if_invalid()
+    {
+        Should.Throw<ArgumentException>(() => Id.Parse("invalid", "acc"));
+    }
 }

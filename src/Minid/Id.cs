@@ -41,6 +41,15 @@ public struct Id : IEquatable<Id>
     public static Id NewId(string? prefix = null) => new(Guid.NewGuid(), prefix);
     public static Id Empty => new(Guid.Empty);
 
+    public static Id Parse(ReadOnlySpan<char> value, string prefix)
+    {
+        if (!TryParse(value, prefix, out Id result))
+        {
+            throw new ArgumentException("Value cannot be parsed", nameof(value));
+        }
+
+        return result;
+    }
 
     public static bool TryParse(ReadOnlySpan<char> value, string prefix, out Id result)
     {
@@ -67,6 +76,16 @@ public struct Id : IEquatable<Id>
 
         result = default;
         return false;
+    }
+
+    public static Id Parse(ReadOnlySpan<char> value)
+    {
+        if (!TryParse(value, out Id result))
+        {
+            throw new ArgumentException("Value cannot be parsed", nameof(value));
+        }
+
+        return result;
     }
 
     public static bool TryParse(ReadOnlySpan<char> value, out Id result)
