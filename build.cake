@@ -6,7 +6,6 @@
 // Install addins 
 #addin nuget:?package=Cake.Sonar&version=1.1.30
 
-
  #r "System.Text.Json"
  #r "System.IO"
 
@@ -224,10 +223,10 @@ Task("Default")
     .IsDependentOn("GenerateReports");
 
 Task("CI")
-    .IsDependentOn("SonarBegin")
+    //.IsDependentOn("SonarBegin")
     .IsDependentOn("Default")
     .IsDependentOn("UploadCoverage")
-    .IsDependentOn("SonarEnd");
+    //.IsDependentOn("SonarEnd");
 
 Task("Publish")
     .IsDependentOn("CI")
