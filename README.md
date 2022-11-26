@@ -24,6 +24,8 @@ Minid generates human-readable, URL-friendly, unique identifiers that are comput
 
 The `Guid` `8108afcc-980f-438d-bdd7-51375fcf073a` converted to a Minid `Id` is encoded as `473cr1y0ghbyc3m1yfbwvn3nxx`.
 
+https://dotnetfiddle.net/jim7YP
+
 ## Motivation
 
 The motivation for this library came from a need to return readable "resource" identifiers in our APIs that could be computed quickly (no database lookups). In .NET the [Guid Struct](https://learn.microsoft.com/en-us/dotnet/api/system.guid?view=net-7.0) meets the uniqueness and computational requirements but its string representation is not optimal in terms of size and format.
