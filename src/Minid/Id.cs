@@ -30,13 +30,14 @@ public struct Id : IEquatable<Id>
     private static readonly string EmptyString = new('0', Length);
 
     private readonly Guid _value;
-    private readonly string? _prefix;
 
     public Id(Guid value, string? prefix = default)
     {
         _value = value;
-        _prefix = prefix;
+        Prefix = prefix;
     }
+
+    public string? Prefix { get; }
 
     public static Id NewId(string? prefix = null) => new(Guid.NewGuid(), prefix);
     public static Id Empty => new(Guid.Empty);
@@ -144,7 +145,7 @@ public struct Id : IEquatable<Id>
     /// Converts the ID to a base-32 encoded value
     /// </summary>
     /// <returns></returns>
-    public override string ToString() => Encode(_value, _prefix);
+    public override string ToString() => Encode(_value, Prefix);
 
     /// <summary>
     /// Encodes the provided Guid value

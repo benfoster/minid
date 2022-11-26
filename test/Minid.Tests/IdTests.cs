@@ -7,6 +7,7 @@ public class IdTests
     public void Can_encode_and_decode()
     {
         var id = Id.NewId();
+
         string encoded = id.ToString();
 
         Id.TryParse(encoded, out Id decoded).ShouldBeTrue();
