@@ -30,17 +30,27 @@ public struct Id : IEquatable<Id>
     private static readonly string EmptyString = new('0', Length);
 
     private readonly Guid _value;
-    private readonly string? _prefix;
 
     public Id(Guid value, string? prefix = default)
     {
         _value = value;
-        _prefix = prefix;
+        Prefix = prefix;
     }
+
+    public string? Prefix { get; }
 
     public static Id NewId(string? prefix = null) => new(Guid.NewGuid(), prefix);
     public static Id Empty => new(Guid.Empty);
 
+    public static Id Parse(ReadOnlySpan<char> value, string prefix)
+    {
+        if (!TryParse(value, prefix, out Id result))
+        {
+            throw new ArgumentException("Value cannot be parsed", nameof(value));
+        }
+
+        return result;
+    }
 
     public static bool TryParse(ReadOnlySpan<char> value, string prefix, out Id result)
     {
@@ -67,6 +77,16 @@ public struct Id : IEquatable<Id>
 
         result = default;
         return false;
+    }
+
+    public static Id Parse(ReadOnlySpan<char> value)
+    {
+        if (!TryParse(value, out Id result))
+        {
+            throw new ArgumentException("Value cannot be parsed", nameof(value));
+        }
+
+        return result;
     }
 
     public static bool TryParse(ReadOnlySpan<char> value, out Id result)
@@ -110,7 +130,7 @@ public struct Id : IEquatable<Id>
 
     private static bool TryGetPrefix(ReadOnlySpan<char> value, out int index, out ReadOnlySpan<char> prefix)
     {
-        index = value.IndexOf(Separator);
+        index = value.LastIndexOf(Separator);
         prefix = default;
 
         if (index > 0)
@@ -125,7 +145,7 @@ public struct Id : IEquatable<Id>
     /// Converts the ID to a base-32 encoded value
     /// </summary>
     /// <returns></returns>
-    public override string ToString() => Encode(_value, _prefix);
+    public override string ToString() => Encode(_value, Prefix);
 
     /// <summary>
     /// Encodes the provided Guid value

@@ -7,6 +7,7 @@ public class IdTests
     public void Can_encode_and_decode()
     {
         var id = Id.NewId();
+
         string encoded = id.ToString();
 
         Id.TryParse(encoded, out Id decoded).ShouldBeTrue();
@@ -54,26 +55,30 @@ public class IdTests
         encoded.Length.ShouldBe(31); // prefix + separator + 26 encoded guid
     }
 
-    [Fact]
-    public void Can_decode_prefixed_id()
+    [Theory]
+    [InlineData("cust")]
+    [InlineData("a_cust")]
+    public void Can_decode_prefixed_id(string prefix)
     {
-        var id = Id.NewId(prefix: "cust");
+        var id = Id.NewId(prefix: prefix);
         var encoded = id.ToString();
 
         Id.TryParse(encoded, out Id decoded).ShouldBeTrue();
         decoded.ShouldBe(id);
-        decoded.ToString().ShouldStartWith("cust_");
+        decoded.ToString().ShouldStartWith(prefix + "_");
     }
 
-    [Fact]
-    public void Can_decode_known_prefixed_id()
+    [Theory]
+    [InlineData("cust")]
+    [InlineData("a_cust")]
+    public void Can_decode_known_prefixed_id(string prefix)
     {
-        var id = Id.NewId(prefix: "cust");
+        var id = Id.NewId(prefix: prefix);
         var encoded = id.ToString();
 
-        Id.TryParse(encoded, "cust", out Id decoded).ShouldBeTrue();
+        Id.TryParse(encoded, prefix, out Id decoded).ShouldBeTrue();
         decoded.ShouldBe(id);
-        decoded.ToString().ShouldStartWith("cust_");
+        decoded.ToString().ShouldStartWith(prefix + "_");
     }
 
     [Theory]
@@ -93,5 +98,31 @@ public class IdTests
     public void Validates_known_prefix(string encoded, string knownPrefix, bool isValid)
     {
         Id.TryParse(encoded, knownPrefix, out Id _).ShouldBe(isValid);
+    }
+
+    [Theory]
+    [InlineData("473cr1y0ghbyc3m1yfbwvn3nxx")]
+    [InlineData("acc_473cr1y0ghbyc3m1yfbwvn3nxx")]
+    public void Can_parse(string encoded)
+    {
+        Id.Parse(encoded);
+    }
+
+    [Fact]
+    public void Can_parse_throws_if_invalid()
+    {
+        Should.Throw<ArgumentException>(() => Id.Parse("invalid"));
+    }
+
+    [Fact]
+    public void Can_parse_with_prefix()
+    {
+        Id.Parse("acc_473cr1y0ghbyc3m1yfbwvn3nxx", "acc");
+    }
+
+    [Fact]
+    public void Can_parse_with_prefix_throws_if_invalid()
+    {
+        Should.Throw<ArgumentException>(() => Id.Parse("invalid", "acc"));
     }
 }

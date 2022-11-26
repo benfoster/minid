@@ -4,10 +4,7 @@
 #tool "dotnet:?package=dotnet-sonarscanner&version=5.8.0"
 
 // Install addins 
-#addin nuget:?package=Cake.Coverlet&version=2.5.4
 #addin nuget:?package=Cake.Sonar&version=1.1.30
-// #addin nuget:?package=Cake.Git&version=2.0.0
-
 
  #r "System.Text.Json"
  #r "System.IO"
@@ -98,28 +95,26 @@ Task("Test")
         foreach (var project in GetFiles(testFiles))
         {
             var projectName = project.GetFilenameWithoutExtension();
+            var coverageOutputName = $"{projectName}.opencover.xml";
+            var outputPath = FilePath.FromString(System.IO.Path.Combine(coveragePath, coverageOutputName))
+                .MakeAbsolute(Context.Environment);
+
+            Information(outputPath);
             
-            var testSettings = new DotNetCoreTestSettings 
+            var testSettings = new DotNetTestSettings 
             {
                 NoBuild = true,
                 Configuration = configuration,
                 Loggers = { $"trx;LogFileName={projectName}.TestResults.xml" },
-                ResultsDirectory = artifactsPath
+                ResultsDirectory = artifactsPath,
+                ArgumentCustomization = args => 
+                    args.Append("/p:CollectCoverage=true")
+                        .Append("/p:CoverletOutputFormat=opencover")
+                        .Append($"/p:CoverletOutput={outputPath}")
+                        .Append($"/p:Threshold={coverageThreshold}")
             };
             
-            // https://github.com/Romanx/Cake.Coverlet
-            var coverletSettings = new CoverletSettings 
-            {
-                CollectCoverage = true,
-                CoverletOutputFormat = CoverletOutputFormat.opencover,
-                CoverletOutputDirectory = coveragePath,
-                CoverletOutputName = $"{projectName}.opencover.xml",
-                Threshold = coverageThreshold
-            };
-            
-            // This method is exposed by Cake.Coverlet which has not yet been
-            // updated to target Cake.Core 2.0
-            DotNetCoreTest(project.ToString(), testSettings, coverletSettings);
+            DotNetTest(project.ToString(), testSettings);
         }
    });
 
@@ -228,10 +223,10 @@ Task("Default")
     .IsDependentOn("GenerateReports");
 
 Task("CI")
-    .IsDependentOn("SonarBegin")
+    //.IsDependentOn("SonarBegin")
     .IsDependentOn("Default")
-    .IsDependentOn("UploadCoverage")
-    .IsDependentOn("SonarEnd");
+    .IsDependentOn("UploadCoverage");
+    //.IsDependentOn("SonarEnd");
 
 Task("Publish")
     .IsDependentOn("CI")
